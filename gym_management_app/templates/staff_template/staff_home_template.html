@@ -1,0 +1,75 @@
+    {% extends 'staff_template/base_template.html' %}
+    {% block page_title %}
+    Home
+    {% endblock page_title %}
+    {% block main_content %}
+    {% load static %}
+<!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+        <h1>Welcome {{user.first_name}} Sir,</h1>
+        <div>
+          <p>You are training <strong>{{context.matching_count}} Gym Members:</strong></p>
+
+          <div class="card-body table-responsive p-0">
+            <table class="table table-hover text-nowrap">
+                <thead>
+                    <tr>
+                        <th>S.N</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Profile Pic</th>
+                        <th>Address</th>
+                        <th>Phone Number</th>
+                        <th>Date Joined</th>
+                    </tr>
+                </thead>
+                <tbody>
+                  {% for customerdue in context.customerdue %}
+                    <tr class="due-row" data-end-date="{{ customerdue.session_end_date }}">
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ customerdue.customer_id.admin.first_name }} {{ customerdue.customer_id.admin.last_name }}</td>
+                        <td>{{ customerdue.customer_id.admin.email }}</td>
+                        <td>
+                          <img src="{{ customerdue.customer_id.profile_pic }}" style="width: 100px" />
+                      </td>
+                        <td>{{ customerdue.customer_id.address }}</td>
+                        <td>{{ customerdue.customer_id.phoneno }}</td>
+                        <td>{{ customerdue.created_at }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% if context.message %}
+        {% for message in context.message %}
+        {%if message.end_date >= context.current_date%}
+        <div id="messageModal" class="modal" tabindex="-1" role="dialog">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">Message</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <p>{{ message.description }}</p>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        {%endif%}
+        {%endfor%}
+        {% endif%}
+        
+        </div>
+      </div>
+    </section>
+    <!-- /.content -->
+    <script src="{% static 'dist/js/student_home_template.js' %}?v={{ time }}"></script>
+    {% endblock main_content %}

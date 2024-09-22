@@ -1,0 +1,77 @@
+{% extends 'hod_template/base_template.html' %} {% block page_title %} Manage
+Event {% endblock page_title %} {% load static %} {% block main_content %}
+<!-- Main content -->
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Event Details</h3>
+
+            <div class="card-tools">
+            </div>
+          </div>
+          <!-- /.card-header -->
+          <div class="card-body table-responsive p-0">
+            <table class="table table-hover text-nowrap">
+              <thead>
+                <tr>
+                  <th>S.N</th>
+                  <th>Event Name</th>
+                  <th>Event Description</th>
+                  <th>Event Date</th>
+                  <th>Amount for Event</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for event in event %}
+                <tr>
+                  <td>{{ forloop.counter }}</td>
+                  <td>{{event.event_name}}</td>
+                  <td>{{event.event_description}}</td>
+                  <td>{{event.event_date}}</td>
+                  <td>{{event.amount}}</td>
+                  <td>
+                    <a
+                      href="/edit_event/{{event.id}}"
+                      class="btn btn-success"
+                      >Edit</a
+                    >
+                    <a
+                      href="/delete_event/{{event.id}}"
+                      class="btn btn-danger" onclick="return confirmDeleteEvent();"
+                      >Delete</a
+                    >
+                    <a
+                      href="{% url 'send_event_email' event.id %}"
+                      class="btn btn-info"
+                    >
+                      Send Email
+                    </a>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% if messages %}
+          {% for message in messages %}
+              <div class="alert {% if message.tags == 'success' %}alert-success{% else %}alert-danger{% endif %}">
+                  {{ message }}
+              </div>
+          {% endfor %}
+      {% endif %}
+          <!-- /.card-body -->
+        </div>
+        <!-- /.card -->
+      </div>
+    </div>
+  </div>
+  <!-- /.container-fluid -->
+</section>
+<!-- /.content -->
+<script src="{% static 'dist/js/manage_student_template.js' %}?v={{ time }}"></script>
+<script src="{% static 'dist/js/manage_event_template.js' %}?v={{ time }}"></script>
+{% endblock main_content %}

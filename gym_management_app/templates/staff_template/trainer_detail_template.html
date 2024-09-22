@@ -1,0 +1,72 @@
+{% extends 'staff_template/base_template.html' %}
+    {% block page_title %}
+    Trainer Detail
+    {% endblock page_title %}
+    {% block main_content %}
+    {% load static %}
+<!-- Main content -->
+<section class="content">
+  <div class="container-fluid">
+     <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Trainer Detail</h3>
+            
+          </div>
+          <!-- /.card-header -->
+          <div class="card-body table-responsive p-0">
+            <div class="container">
+              <div class="row justify-content-center">
+                <!-- Center Profile Picture and Name -->
+                <div class="col-12 text-center mb-4">
+                  <img src="{{trainer.profile_pic}}" class="rounded-circle" style="width:150px; border: 2px solid #ddd;" />
+                  <h3 class="mt-3">{{ trainer.admin.first_name }} {{ trainer.admin.last_name }}</h3>
+                </div>
+                
+                <!-- Other Details Below the Profile Picture -->
+                <div class="col-md-6">
+                  <ul class="list-group">
+                    <li class="list-group-item">
+                      <i class="fas fa-envelope"></i>&nbsp;{{ trainer.admin.email }}
+                    </li>
+                    <li class="list-group-item">
+                      <i class="fas fa-phone"></i>&nbsp; {{ trainer.phoneno }}
+                    </li>
+                    <li class="list-group-item">
+                      <i class="fas fa-map-marker-alt"></i>&nbsp; {{ trainer.address }}
+                    </li>
+                    <li class="list-group-item">
+                      <i class="fas fa-venus-mars"></i>&nbsp; {{ trainer.gender }}
+                    </li>
+                    <li class="list-group-item">
+                        <i class="fas fa-coins"></i>&nbsp; Price: Rs. {{ trainer.price }} 
+                    </li>
+                  </ul>
+                </div>
+                <div class="col-12">
+                  <hr />
+                </div>
+              </div>
+              <p class="row justify-content-center">If there is any mistake please contact with admin (Gym Owner)</p>
+            </div>
+            
+            
+          </div>
+          <!-- /.card-body -->
+          {% if messages %}
+{% for message in messages %}
+    <div class="alert {% if message.tags == 'success' %}alert-success{% else %}alert-danger{% endif %}">
+        {{ message }}
+    </div>
+{% endfor %}
+{% endif %}
+        </div>
+        <!-- /.card -->
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
+</section>
+<!-- /.content -->
+<script src="{% static 'dist/js/manage_student_template.js' %}?v={{ time }}"></script>
+{% endblock main_content %}

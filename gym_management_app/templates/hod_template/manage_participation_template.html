@@ -1,0 +1,65 @@
+{% extends 'hod_template/base_template.html' %} {% block page_title %} Manage
+Participators {% endblock page_title %} {% load static %} {% block main_content %}
+<!-- Main content -->
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Participators Details</h3>
+          </div>
+          <div class="card-body table-responsive p-0">
+            {% regroup eventparticipation by event_id.event_name as event_groups %}
+            
+            {% for group in event_groups %}
+            <div>
+              <h3>{{ group.grouper }}</h3>
+              <a href="{% url 'delete_eventparticipators' group.list.0.event_id.id %}" class="btn btn-danger" onclick="return confirmDeleteCustomerDue();">Delete All</a>
+          </div>
+            <table class="table table-hover text-nowrap">
+                <thead>
+                    <tr>
+                        <th>S.N</th>
+                        <th>Name of Participators</th>
+                        <th>Event Name</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Loop through each event participation under the same event name -->
+                    {% for eventparticipation in group.list %}
+                    <tr class="due-row" data-end-date="{{ customerdue.session_end_date }}">
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ eventparticipation.participator }}</td>
+                        <td>{{ eventparticipation.event_id.event_name }}</td>
+                        <td>{{ eventparticipation.amount }}</td>
+                        <td>
+                           
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% endfor %}
+        </div>
+        
+          <!-- /.card-body -->
+          {% if messages %}
+    {% for message in messages %}
+        <div class="alert {% if message.tags == 'success' %}alert-success{% else %}alert-danger{% endif %}">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+        </div>
+        <!-- /.card -->
+      </div>
+    </div>
+  </div>
+  <!-- /.container-fluid -->
+</section>
+<script src="{% static 'dist/js/manage_student_template.js' %}?v={{ time }}"></script>
+<script src="{% static 'dist/js/manage_gymfees_template.js' %}?v={{ time }}"></script>
+<!-- /.content -->
+{% endblock main_content %}

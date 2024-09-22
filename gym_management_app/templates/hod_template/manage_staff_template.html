@@ -1,0 +1,103 @@
+{% extends 'hod_template/base_template.html' %} {% block page_title %} Manage
+Trainer {% endblock page_title %} {% load static %} {% block main_content %}
+<!-- Main content -->
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Trainer Details</h3>
+
+            <div class="card-tools">
+              <form method="GET" action="{% url 'manage_trainer' %}">
+                <div class="input-group">
+                  <input type="text" name="search" class="form-control" placeholder="Search by name" value="{{ request.GET.search }}">
+                  <div class="input-group-append">
+                    <button type="submit" class="btn btn-default">
+                      <i class="fas fa-search"></i>
+                    </button>
+                  </div>
+                </div>
+              </form>
+              {% if Trainer.exists %}
+    <!-- Display Trainer Table -->
+              {% else %}
+                <p>No trainers found matching your search criteria.</p>
+              {% endif %}
+              
+            </div>
+          </div>
+          <!-- /.card-header -->
+          <div class="card-body table-responsive p-0">
+            <table class="table table-hover text-nowrap">
+              <thead>
+                <tr>
+                  <th>S.N</th>
+                  <th>First Name</th>
+                  <th>Last Name</th>
+                  <th>User Name</th>
+                  <th>Email</th>
+                  <th>Address</th>
+                  <th>Phone No</th>
+                  <th>Gender</th>
+                  <th>Price</th>
+                  <th>Profile Pic</th>
+                  <th>Last Login</th>
+                  <th>Date Joined</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for trainer in Trainer %}
+                <tr>
+                  <td>{{ forloop.counter }}</td>
+                  <td>{{trainer.admin.first_name}}</td>
+                  <td>{{trainer.admin.last_name}}</td>
+                  <td>{{trainer.admin.username}}</td>
+                  <td>{{trainer.admin.email}}</td>
+                  <td>{{trainer.address}}</td>
+                  <td>{{trainer.phoneno}}</td>
+                  <td>{{trainer.gender}}</td>
+                  <td>{{trainer.price}}</td>
+                  <td>
+                    <img src="{{trainer.profile_pic}}" style="width: 100px" />
+                  </td>
+                  <td>{{trainer.admin.last_login}}</td>
+                  <td>{{trainer.admin.date_joined}}</td>
+                  <td>
+                    <a
+                      href="/edit_trainer/{{trainer.admin.id}}"
+                      class="btn btn-success"
+                      >Edit</a
+                    >
+                    <a
+                      href="/delete_trainer/{{trainer.admin.id}}"
+                      class="btn btn-danger"
+                      class="btn btn-danger" onclick="return confirmDeleteTrainer();"
+                      >Delete</a
+                    >
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% if messages %}
+          {% for message in messages %}
+              <div class="alert {% if message.tags == 'success' %}alert-success{% else %}alert-danger{% endif %}">
+                  {{ message }}
+              </div>
+          {% endfor %}
+      {% endif %}
+          <!-- /.card-body -->
+        </div>
+        <!-- /.card -->
+      </div>
+    </div>
+  </div>
+  <!-- /.container-fluid -->
+</section>
+<!-- /.content -->
+<script src="{% static 'dist/js/manage_student_template.js' %}?v={{ time }}"></script>
+{% endblock main_content %}

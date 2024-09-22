@@ -1,0 +1,95 @@
+{% extends 'hod_template/base_template.html' %} 
+{% block page_title %} 
+  Add Participators
+  {% endblock page_title %} 
+  {% load static %}
+{% block main_content %}
+<!-- Main content -->
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <!-- general form elements -->
+        <div class="card card-primary">
+          <div class="card-header">
+            <h3 class="card-title">Add Participators</h3>
+          </div>
+          <!-- /.card-header -->
+          <!-- form start -->
+          <form role="form" action="/save_add_participation" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="card-body">
+                <div class="form-group">
+                    <label for="event">Event</label>
+                    {{ form.event }}
+                </div>
+                
+                <div class="form-group">
+                  <label for="event">Trainer</label>
+                {{ form.participator }}
+                </div>
+
+              <div class="form-group">
+                <label for="amount">Amount</label>
+                <input type="text" id="amount" name="amount" class="form-control" readonly> 
+            </div>
+
+                <div class="form-group">
+                    {% if messages %}
+                    {% for message in messages %}
+                    {% if message.tags == 'error' %}
+                    <div class="alert alert-danger" style="margin-top:10px">{{ message }}</div>
+                    {% endif %}
+                    {% if message.tags == 'success' %}
+                    <div class="alert alert-success" style="margin-top:10px">{{ message }}</div>
+                    {% endif %}
+                    {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+        
+            <div class="card-footer">
+                <button type="submit" class="btn btn-primary btn-block">Add Participator</button>
+            </div>
+        </form>
+        </div>
+        <!-- /.card -->
+      </div>
+    </div>
+  </div>
+  <!-- /.container-fluid -->
+</section>
+<script>
+  // Grab the event dropdown and amount input
+const eventSelect = document.querySelector('#id_event'); // Django auto-assigns 'id_event' to the form field
+const amountInput = document.querySelector('#amount');
+
+// Event data from the backend (context variable)
+const eventData = {{ event_data|safe }};  // Django context variable with event data (ID and amount)
+
+function updateAmount() {
+    const selectedEventId = eventSelect.value;
+
+    // Find the corresponding event and amount from the eventData list
+    const selectedEvent = eventData.find(event => event.id == selectedEventId);
+
+    if (selectedEvent) {
+        // Update the amount input field with the selected event's amount
+        amountInput.value = selectedEvent.amount;
+    } else {
+        // Clear the amount field if no event is selected
+        amountInput.value = '';
+    }
+}
+
+// Trigger the change event manually when the page loads to set the amount
+window.onload = function() {
+    updateAmount();  // Call the function to set the amount for the default selection
+};
+
+// Add the event listener for the dropdown
+eventSelect.addEventListener('change', updateAmount);
+
+</script>
+<!-- /.content -->
+{% endblock main_content %}

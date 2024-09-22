@@ -1,0 +1,56 @@
+    {% extends 'staff_template/base_template.html' %}
+    {% block page_title %}
+    View Member Leave
+    {% endblock page_title %}
+    {% block main_content %}
+<!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+            <!-- general form elements -->
+            <div class="card card-primary">
+              <div class="card-header">
+                <h3 class="card-title">View Member Leave</h3>
+              </div>
+
+              <div class="card-body table-responsive p-0">
+                <table class="table table-hover text-nowrap">
+                    <thead>
+                        <tr>
+                            <th>S.N</th>
+                            <th>Name</th>
+                            <th>Profile Pic</th>
+                            <th>Address</th>
+                            <th>Phone Number</th>
+                            <th>To</th>
+                            <th>From</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                      {%for customerleave in customerleave%}
+                      {% if customerleave.end_date >= current_date %}
+                        <tr class="due-row">
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ customerleave.customer_id.admin.first_name }} {{ customerleave.customer_id.admin.last_name }}</td>
+                            <td>
+                              <img src="{{ customerleave.customer_id.profile_pic }}" style="width: 100px" />
+                          </td>
+                            <td>{{ customerleave.customer_id.address }}</td>
+                            <td>{{ customerleave.customer_id.phoneno }}</td>
+                            <td>{{ customerleave.start_date }}</td>
+                            <td>{{ customerleave.end_date }}</td>
+                        </tr>
+                        {%endif%}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            </div>
+
+
+          </div>
+        </div>
+      </div>
+    </section>
+    {% endblock main_content %}

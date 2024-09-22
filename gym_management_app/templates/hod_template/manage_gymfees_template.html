@@ -1,0 +1,107 @@
+{% extends 'hod_template/base_template.html' %} {% block page_title %} Manage
+Gym Fees {% endblock page_title %} {% load static %} {% block main_content %}
+<!-- Main content -->
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Gym Members Due Details</h3>
+
+            <div class="card-tools">
+              <form method="GET" action="{% url 'manage_gymfees' %}">
+                <div class="input-group">
+                  <input type="text" name="search" class="form-control" placeholder="Search by name" value="{{ request.GET.search }}">
+                  <div class="input-group-append">
+                    <button type="submit" class="btn btn-default">
+                      <i class="fas fa-search"></i>
+                    </button>
+                  </div>
+                </div>
+              </form>
+              {% if customerdue.exists %}
+              {% else %}
+                <p>No Gym Member found matching your search criteria.</p>
+              {% endif %}
+            </div>
+            <div class="card-tools mr-4">
+              <form method="GET" action="{% url 'manage_gymfees' %}" id="order-form">
+                <div class="input-group">
+                  <select name="order" class="form-control" value="{{ request.GET.order }}" onchange="this.form.submit()">
+                    <option value="days-left" {% if request.GET.order == 'days-left' %}selected{% endif %}>Days Left</option>
+                    <option value="name" {% if request.GET.order == 'name' %}selected{% endif %}>Name</option>
+                    <option value="amount" {% if request.GET.order == 'amount' %}selected{% endif %}>Amount</option>
+                    <option value="updated-at" {% if request.GET.order == 'updated-at' %}selected{% endif %}>Updated At</option>
+                  </select>
+                </div>
+              </form>
+            </div>
+          </div>
+          <!-- /.card-header -->
+          <div class="card-body table-responsive p-0">
+            <table class="table table-hover text-nowrap">
+                <thead>
+                    <tr>
+                        <th>S.N</th>
+                        <th>Name</th>
+                        <th>Trainer</th>
+                        <th>Start Due Date</th>
+                        <th>Amount</th>
+                        <th>End Due Date</th>
+                        <th>Profile Pic</th>
+                        <th>Days Left</th>
+                        <th>Updated At</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for customerdue in customerdue %}
+                    <tr class="due-row" data-end-date="{{ customerdue.session_end_date }}">
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ customerdue.customer_id.admin.first_name }} {{ customerdue.customer_id.admin.last_name }}</td>
+                        <td>{{ customerdue.trainer_id.admin.first_name }} {{ customerdue.trainer_id.admin.last_name }}</td>
+                        <td>{{ customerdue.session_start_date }}</td>
+                        <td>{{ customerdue.amount }}</td>
+                        <td>{{ customerdue.session_end_date }}</td>
+                        <td>
+                            <img src="{{ customerdue.customer_id.profile_pic }}" style="width: 100px" />
+                        </td>
+                        <td class="days-left"></td> <!-- Updated: Add this column for days left -->
+                        <td>{{ customerdue.updated_at }}</td>
+                        <td>
+                            <a href="/edit_gymfees/{{ customerdue.id }}" class="btn btn-success">Edit</a>
+                            <a href="/delete_gymfees/{{ customerdue.id }}" class="btn btn-danger" onclick="return confirmDeleteCustomerDue();">Delete</a>
+                            <a 
+                              href="{% url 'send_gymfees_email' customerdue.id %}" 
+                              class="btn btn-info" 
+                              data-email-link="{% url 'send_gymfees_email' customerdue.id %}">
+                              Send Email
+                          </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        
+          <!-- /.card-body -->
+          {% if messages %}
+    {% for message in messages %}
+        <div class="alert {% if message.tags == 'success' %}alert-success{% else %}alert-danger{% endif %}">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+        </div>
+        <!-- /.card -->
+      </div>
+    </div>
+  </div>
+  <!-- /.container-fluid -->
+</section>
+<script src="{% static 'dist/js/manage_student_template.js' %}?v={{ time }}"></script>
+<script src="{% static 'dist/js/manage_gymfees_template.js' %}?v={{ time }}"></script>
+<!-- /.content -->
+{% endblock main_content %}
