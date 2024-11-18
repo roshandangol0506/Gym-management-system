@@ -1,8 +1,8 @@
 from django import forms
 from django.forms import ChoiceField
-from django.forms.widgets import CheckboxSelectMultiple
+from django.forms.widgets import CheckboxSelectMultiple, SelectMultiple, CheckboxInput
 
-from gym_management_app.models import Trainer, Customer, Event 
+from gym_management_app.models import Trainer, Customer, Event, EventParticipation 
 
 class ChoiceNoValidation(ChoiceField):
     def validate(self, value):
@@ -56,7 +56,7 @@ class AddCustomerForm(forms.Form):
     last_name=forms.CharField(label="last_name",max_length=50,widget=forms.TextInput(attrs={"class":"form-control"}))
     username=forms.CharField(label="username",max_length=50,widget=forms.TextInput(attrs={"class":"form-control","autocomplete":"off"}))
     address=forms.CharField(label="address",max_length=50,widget=forms.TextInput(attrs={"class":"form-control"}))
-    phoneno=forms.CharField(label="Phone No",max_length=10,widget=forms.TextInput(attrs={"class":"form-control"}))
+    phoneno=forms.CharField(label="Phone No",max_length=10,widget=forms.NumberInput(attrs={"class":"form-control"}))
 
     gender_choice=(
         ("Male","Male"),
@@ -67,10 +67,10 @@ class AddCustomerForm(forms.Form):
     profile_pic=forms.FileField(label="profile_pic",max_length=50,widget=forms.FileInput(attrs={"class":"form-control", "accept": ".jpg, .jpeg, .png"}))
     height=forms.FloatField(label="height",widget=forms.NumberInput(attrs={"class":"form-control","placeholder": "in ft"}), min_value=0.0)
     weight=forms.FloatField(label="weight",widget=forms.NumberInput(attrs={"class":"form-control","placeholder": "in kg"}), min_value=0.0)
-    age=forms.IntegerField(label="age",widget=forms.NumberInput(attrs={"class":"form-control"}), min_value=0)
-    bicepsize=forms.FloatField(label="Bicep Size",widget=forms.NumberInput(attrs={"class":"form-control","placeholder": "in kg"}), min_value=0.0)
-    chestsize=forms.FloatField(label="Chest Size",widget=forms.NumberInput(attrs={"class":"form-control","placeholder": "in kg"}), min_value=0.0)
-    legsize=forms.FloatField(label="Leg Size",widget=forms.NumberInput(attrs={"class":"form-control","placeholder": "in kg"}), min_value=0.0)
+    age=forms.IntegerField(label="age",widget=forms.NumberInput(attrs={"class":"form-control","placeholder": "Eg: 18"}), min_value=0)
+    bicepsize=forms.FloatField(label="Bicep Size",widget=forms.NumberInput(attrs={"class":"form-control","placeholder": "in inch"}), min_value=0.0)
+    chestsize=forms.FloatField(label="Chest Size",widget=forms.NumberInput(attrs={"class":"form-control","placeholder": "in inch"}), min_value=0.0)
+    legsize=forms.FloatField(label="Leg Size",widget=forms.NumberInput(attrs={"class":"form-control","placeholder": "in inch"}), min_value=0.0)
 
 class EditCustomerForm(forms.Form):
     email=forms.EmailField(label="email",max_length=50,widget=forms.EmailInput(attrs={"class":"form-control","autocomplete":"off"}))
@@ -89,10 +89,10 @@ class EditCustomerForm(forms.Form):
     profile_pic=forms.FileField(label="profile_pic",max_length=50,required=False,widget=forms.FileInput(attrs={"class":"form-control", "accept": ".jpg, .jpeg, .png"}))
     height=forms.FloatField(label="height",widget=forms.NumberInput(attrs={"class":"form-control","placeholder": "in ft"}), min_value=0.0)
     weight=forms.FloatField(label="weight",widget=forms.NumberInput(attrs={"class":"form-control","placeholder": "in kg"}), min_value=0.0)
-    age=forms.IntegerField(label="age",widget=forms.NumberInput(attrs={"class":"form-control"}), min_value=0)
-    bicepsize=forms.FloatField(label="Bicep Size",widget=forms.NumberInput(attrs={"class":"form-control","placeholder": "in kg"}), min_value=0.0)
-    chestsize=forms.FloatField(label="Chest Size",widget=forms.NumberInput(attrs={"class":"form-control","placeholder": "in kg"}), min_value=0.0)
-    legsize=forms.FloatField(label="Leg Size",widget=forms.NumberInput(attrs={"class":"form-control","placeholder": "in kg"}), min_value=0.0)
+    age=forms.IntegerField(label="age",widget=forms.NumberInput(attrs={"class":"form-control","placeholder": "Eg: 18"}), min_value=0)
+    bicepsize=forms.FloatField(label="Bicep Size",widget=forms.NumberInput(attrs={"class":"form-control","placeholder": "in inch"}), min_value=0.0)
+    chestsize=forms.FloatField(label="Chest Size",widget=forms.NumberInput(attrs={"class":"form-control","placeholder": "in inch"}), min_value=0.0)
+    legsize=forms.FloatField(label="Leg Size",widget=forms.NumberInput(attrs={"class":"form-control","placeholder": "in inch"}), min_value=0.0)
 
 class AddGymFeesForm(forms.Form):
     trainer = forms.ChoiceField(label="trainer", choices=[], widget=forms.Select(attrs={"class":"form-control"}))
@@ -172,12 +172,12 @@ class EditEventForm(forms.Form):
     amount=forms.FloatField(label="Amount",widget=forms.NumberInput(attrs={"class":"form-control"}), min_value=0.0)
 
 class AddParticipationForm(forms.Form):
-    event = forms.ChoiceField(label="Event", choices=[], widget=forms.Select(attrs={"class": "form-control"}))
     participator = forms.MultipleChoiceField(
         label="Participators",
         choices=[], 
         widget=CheckboxSelectMultiple(attrs={})
     )
+    EventParticipation=EventParticipation.objects.all()
 
     def __init__(self, *args, **kwargs):
         super(AddParticipationForm, self).__init__(*args, **kwargs)
@@ -205,19 +205,25 @@ class AddParticipationForm(forms.Form):
 
         self.fields['participator'].choices = participator_list
 
-        event_list = []
-        try:
-            events = Event.objects.all()
-            for event in events:
-                small_event = (event.id, f"{event.event_name}")
-                event_list.append(small_event)
-        except Event.DoesNotExist:
-            event_list = []
-
-        self.fields['event'].choices = event_list
-
 class AddCustomerLeaveForm(forms.Form):
     start_date = forms.DateField(label="To", widget=forms.DateInput(attrs={"class": "form-control", "type": "date" }))
     end_date = forms.DateField(label="From", widget=forms.DateInput(attrs={"class": "form-control", "type": "date" }))
     description=forms.CharField(label="Description",max_length=50,widget=forms.TextInput(attrs={"class":"form-control"}))
 
+
+class AddPaymentForm(forms.Form):
+    trainer = forms.ChoiceField(label="trainer", choices=[], widget=forms.Select(attrs={"class":"form-control"}))
+
+    def __init__(self, *args, **kwargs):
+        super(AddPaymentForm, self).__init__(*args, **kwargs)
+
+        trainer_list = []
+        try:
+            trainers = Trainer.objects.all()
+            for trainer in trainers:
+                small_trainer = (trainer.id, f"{trainer.admin.first_name} {trainer.admin.last_name} = {trainer.price}")
+                trainer_list.append(small_trainer)
+        except Trainer.DoesNotExist:
+            trainer_list = []
+
+        self.fields['trainer'].choices = trainer_list

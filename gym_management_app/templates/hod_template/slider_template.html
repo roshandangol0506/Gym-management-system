@@ -35,7 +35,6 @@
             <i class="nav-icon fas fa-th"></i>
             <p>
               Add Trainer
-              <span class="right badge badge-danger">New</span>
             </p>
           </a>
         </li>
@@ -49,7 +48,6 @@
             <i class="nav-icon fas fa-th"></i>
             <p>
               Manage Trainer
-              <span class="right badge badge-danger">New</span>
             </p>
           </a>
         </li>
@@ -62,7 +60,6 @@
             <i class="nav-icon fas fa-th"></i>
             <p>
               Add Gym Members
-              <span class="right badge badge-danger">New</span>
             </p>
           </a>
         </li>
@@ -76,7 +73,6 @@
             <i class="nav-icon fas fa-th"></i>
             <p>
               Manage Gym Members
-              <span class="right badge badge-danger">New</span>
             </p>
           </a>
         </li>
@@ -89,7 +85,6 @@
             <i class="nav-icon fas fa-th"></i>
             <p>
               Add Gym Fees
-              <span class="right badge badge-danger">New</span>
             </p>
           </a>
         </li>
@@ -104,7 +99,6 @@
             <i class="nav-icon fas fa-th"></i>
             <p>
               Manage Gym Fees
-              <span class="right badge badge-danger">New</span>
             </p>
           </a>
         </li>
@@ -117,7 +111,6 @@
             <i class="nav-icon fas fa-th"></i>
             <p>
               Add Event
-              <span class="right badge badge-danger">New</span>
             </p>
           </a>
         </li>
@@ -127,38 +120,11 @@
           {% url 'send_event' event_id=id as send_event %}
           <a
             href="{{ manage_event }}"
-            class="nav-link {% if request.path == manage_event %} active {% endif %} {% if request.path == edit_event %} active {% endif %} {% if request.path == send_event %} active {% endif %}"
+            class="nav-link {% if request.path == manage_event %} active {% endif %} {% if request.path == edit_event %} active {% endif %} {% if request.path == send_event %} active {% endif %} {% if request.path == manage_participation %} active {% endif %}"
           >
             <i class="nav-icon fas fa-th"></i>
             <p>
               Manage Event
-              <span class="right badge badge-danger">New</span>
-            </p>
-          </a>
-        </li>
-        <li class="nav-item">
-          {% url 'add_participation' as add_participation %}
-          <a
-            href="{{ add_participation }}"
-            class="nav-link {% if request.path == add_participation %} active {% endif %}"
-          >
-            <i class="nav-icon fas fa-th"></i>
-            <p>
-              Add Participators
-              <span class="right badge badge-danger">New</span>
-            </p>
-          </a>
-        </li>
-        <li class="nav-item">
-          {% url 'manage_participation' as manage_participation %}
-          <a
-            href="{{ manage_participation }}"
-            class="nav-link {% if request.path == manage_participation %} active {% endif %}"
-          >
-            <i class="nav-icon fas fa-th"></i>
-            <p>
-              Manage Participators
-              <span class="right badge badge-danger">New</span>
             </p>
           </a>
         </li>

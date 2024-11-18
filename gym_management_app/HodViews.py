@@ -9,23 +9,20 @@ from urllib.parse import quote
 from gym_management_app.models import CustomUser, Customer, Trainer, CustomerDue, Event, EventParticipation, Messages
 from gym_management_app.forms import AddTrainerForm, EditTrainerForm, AddCustomerForm, EditCustomerForm, AddGymFeesForm, EditGymFeesForm, AddEventForm, EditEventForm, AddParticipationForm, AddCustomerLeaveForm
 
+from django.core.mail import send_mail
+
 def admin_home(request):
     trainers=Trainer.objects.all()
     customers=Customer.objects.all()
 
-    count_trainer=0
-    for trainer in trainers:
-        count_trainer+=1
-
-    count_customer=0
-    for customer in customers:
-        count_customer+=1
+    trainer_count = trainers.count()
+    customer_count = customers.count()
 
     context = {
         "trainer": trainers,
         "customer": customers,
-        "count_trainer": count_trainer,
-        "count_customer": count_customer,  
+        "count_trainer": trainer_count,
+        "count_customer": customer_count,  
     }
     return render(request, "hod_template/home_content.html", {"context": context})
 
@@ -495,26 +492,32 @@ def delete_gymfees(request, customerdue_id):
 def send_gymfees(request, customerdue_id):
     try:
         customerdue = CustomerDue.objects.get(id=customerdue_id)
-
         customer_email = customerdue.customer_id.admin.email
-        
-        subject = quote("Reminder for Payment in Evengreen Gym Fitness")
-        body = quote(f"Dear {customerdue.customer_id.admin.first_name} {customerdue.customer_id.admin.last_name},\n\nThis mail is a gentle reminder for your pending payment in Evergreen Gym Fitness. The final due date for your payment was {customerdue.session_end_date}. Kindly make the payment as soon as possible.\n\nBest regards,\nEvergreen Gym Fitness")
+        subject = "Reminder for Payment in Evergreen Gym Fitness"
+        body = f"""Dear {customerdue.customer_id.admin.first_name} {customerdue.customer_id.admin.last_name},
 
-        context = {
-            "emails_string": customer_email,
-            "subject": subject,
-            "body": body,
-            "name": customer_email,
-        }  
-        return render(request, "hod_template/send_email_template.html", context)
+        This is a gentle reminder for your pending payment in Evergreen Gym Fitness. The final due date for your payment was {customerdue.session_end_date}. Kindly make the payment as soon as possible.
+
+        Best regards,
+        Evergreen Gym Fitness"""
+
+        send_mail(
+            subject=subject,
+            message=body,
+            from_email=None,  
+            recipient_list=[customer_email],
+            fail_silently=False,
+        )
+        messages.success(request, "Reminder email sent successfully.")
+        
     except CustomerDue.DoesNotExist:
         messages.error(request, "Failed to find the Customer Due.")
-        return redirect("/manage_customerdue")
+        
     except Exception as e:
         print(str(e))
         messages.error(request, "Failed to send email.")
-        return redirect("/manage_customerdue")
+
+    return redirect("/manage_gymfees")
 
 
 def add_event(request):
@@ -545,7 +548,9 @@ def save_add_event(request):
         
 def manage_event(request):
     event=Event.objects.all()
-    return render(request,"hod_template/manage_event_template.html",{"event":event})
+    form = AddParticipationForm()
+    eventparticipation = EventParticipation.objects.all().order_by('participator')
+    return render(request,"hod_template/manage_event_template.html",{"event":event, "form":form, "eventparticipation":eventparticipation})
         
 def edit_event(request, event_id):
     request.session['event_id']= event_id
@@ -604,6 +609,7 @@ def delete_event(request, event_id):
 
     return redirect('/manage_event')
 
+
 def send_event(request, event_id):
     try:
         event = Event.objects.get(id=event_id)
@@ -614,26 +620,31 @@ def send_event(request, event_id):
         trainer_emails = [trainer.admin.email for trainer in trainers]
         
         all_emails = customer_emails + trainer_emails
-        emails_string = ",".join(all_emails)  
 
         subject = quote(event.event_name)
-        body = quote(f"Dear All,\n\nWe are excited to inform you about the upcoming event: {event.event_name} on {event.event_date}.\n\nBest regards,\nEvergreen Gym Fitness")
+        body = f"""Dear All,
 
-        context = {
-            "emails_string": emails_string,
-            "subject": subject,
-            "body": body,
-            "name": "everyone", 
-        }
+        We are excited to inform you about the upcoming event: {event.event_name} on {event.event_date}.
+        
+        Best regards,
+        Evergreen Gym Fitness"""
+        
 
-        return render(request, "hod_template/send_email_template.html", context)
-    except Event.DoesNotExist:
-        messages.error(request, "Failed to find the event.")
-        return redirect("/manage_event")
+        send_mail(
+            subject=subject,
+            message=body,
+            from_email=None,  
+            recipient_list=all_emails,
+            fail_silently=False,
+        )
+        messages.success(request, "Reminder email sent successfully.")
+        
     except Exception as e:
         print(str(e))
         messages.error(request, "Failed to send email.")
-        return redirect("/manage_event")
+    return redirect("/manage_event")
+
+
 
 def add_participation(request):
     form = AddParticipationForm()
@@ -651,7 +662,7 @@ def save_add_participation(request):
     else:
         form = AddParticipationForm(request.POST)
         if form.is_valid():
-            event = form.cleaned_data["event"]
+            event = request.POST.get("event_id")
             participators = form.cleaned_data["participator"]
             amount = request.POST.get("amount")
             print(amount)
@@ -667,7 +678,7 @@ def save_add_participation(request):
                             admin__first_name=first_name,
                             admin__last_name=last_name
                         )
-                        EventParticipation.objects.create(
+                        EventParticipation.objects.update_or_create(
                             event_id=event_id,
                             participator=trainer_instance.admin.first_name+" "+trainer_instance.admin.last_name,  
                             amount=amount
@@ -678,36 +689,39 @@ def save_add_participation(request):
                             admin__first_name=first_name,
                             admin__last_name=last_name
                         )
-                        EventParticipation.objects.create(
+                        EventParticipation.objects.update_or_create(
                             event_id=event_id,
                             participator=customer_instance.admin.first_name+" "+customer_instance.admin.last_name, 
                             amount=amount
                         )
 
                 messages.success(request, "Successfully Added Participation")
-                return HttpResponseRedirect("/add_participation")
+                return HttpResponseRedirect("/manage_event")
             except Exception as e:
                 print(e)  
                 messages.error(request, "Failed to Add Participation")
-                return HttpResponseRedirect("/add_participation")
+                return HttpResponseRedirect("/manage_event")
         else:
             messages.error(request, "Invalid Form Data")
-            return HttpResponseRedirect("/add_participation")
+            return HttpResponseRedirect("/manage_event")
 
         
 
-def manage_participation(request):
-    eventparticipation = EventParticipation.objects.all()
+def manage_participation(request, event_id):
+    eventparticipation=EventParticipation.objects.filter(event_id=event_id).order_by('participator')
     return render(request, "hod_template/manage_participation_template.html",{'eventparticipation':eventparticipation})
 
 
-def delete_eventparticipators(request, event_id):
+def delete_eventparticipators(request, eventparticipation_id):
+    eventparticipation = EventParticipation.objects.get(id=eventparticipation_id)
+    event_id = eventparticipation.event_id.id
+    eventparticipations=EventParticipation.objects.filter(event_id=event_id).order_by('participator')
     try:
-        EventParticipation.objects.filter(event_id=event_id).delete()
-        messages.success(request, f"All participators for Event have been successfully deleted.")
+        eventparticipation.delete()
+        messages.success(request, f"Participator for Event have been successfully deleted.")
     except EventParticipation.DoesNotExist:
-        messages.error(request, f"No participators found for this Event.")
-    return redirect("/manage_participation")  
+        messages.error(request, f"No participator found for this Event.")
+    return render(request, "hod_template/manage_participation_template.html", {'eventparticipation':eventparticipations})
 
 
 def save_add_message(request):

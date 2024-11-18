@@ -1,0 +1,140 @@
+{% extends 'student_template/base_template.html' %}
+{% block page_title %}
+Home
+{% endblock page_title %}
+{% block main_content %}
+{% load static %}
+<!-- Main content -->
+<section class="content">
+  <div class="container-fluid">
+    <h1>Welcome {{user.first_name}},</h1>
+    {% if due %}
+{% for due in due %}
+<div class="due-row" data-end-date="{{ due.session_end_date }}">
+  {% if due.session_end_date > current_date %}
+    <p class="d-inline">You have paid <strong>Rs. {{ due.amount }}</strong> your gym fees on <strong>{{ due.session_start_date }}</strong> and your next payment date is <strong>{{ due.session_end_date }}</strong></p>
+  {% else %}
+  <p class="d-inline">You have paid <strong>Rs. {{ due.amount }}</strong> your gym fees on <strong>{{ due.session_start_date }}</strong> and your next payment date was <strong>{{ due.session_end_date }}</strong>. Please kindly pay gym fees on time</p>
+  {% endif %}
+  <p class="d-inline">(</p>
+  <p class="days-left d-inline"></p>
+  <p class="d-inline">)</p>
+
+
+
+  <h1>Select Payment Method</h1>
+<h4 class="row justify-content-center card-body">Payment Detail</h4>
+<form
+        role="form"
+        action="/save_add_customerleave"
+        method="post"
+        enctype="multipart/form-data"
+      >
+        {% csrf_token %}
+    <div class="card-body">
+      {{ form }}
+      
+      <div class="form-group">
+        <label>Session Start Date</label>
+      <input type="date" id="session_start_date" name="session_start_date" class="form-control" value="{{ form.session_start_date.value }}"/>
+      </div>
+
+      <div class="form-group">
+        <label>Amount</label>
+      <select id="amount" name="amount" class="form-control">
+          <option value="2500">2500</option>
+          <option value="6000">6000</option>
+          <option value="10000">10000</option>
+      </select>
+      </div>
+
+      <div class="form-group">
+        <label>Session End Date</label>
+      <input type="date" id="session_end_date" name="session_end_date" class="form-control"/>
+      </div>
+      <div class="form-group">
+        {% if messages %}
+          {% for message in messages %}
+          {% if message.tags == 'error' %}
+          <div class="alert alert-danger" style="margin-top:10px">{{ message }}</div>
+          {% endif %}
+          {% if message.tags == 'success' %}
+          <div class="alert alert-success" style="margin-top:10px">{{ message }}</div>
+          {% endif %}
+          {% endfor %}
+        {% endif %}
+        <!-- /.col -->
+      </div>
+  <!-- /.card-body -->
+
+  <div class="card-footer">
+    <button type="submit" class="btn btn-primary btn-block">Pay</button>
+  </div>
+</form>
+
+  <form action="https://rc-epay.esewa.com.np/api/epay/main/v2/form" method="POST">
+    <input type="text" id="amount" name="amount" value="{{amount}}" required>
+      <select id="amount" name="amount" class="form-control">
+          <option value="2500">2500</option>
+          <option value="6000">6000</option>
+          <option value="10000">10000</option>
+      </select>
+    <input type="text" id="tax_amount" name="tax_amount" value ="{{tax_amount}}" required>
+    <input type="text" id="total_amount" name="total_amount" value="{{total_amount}}" required>
+    <input type="text" id="transaction_uuid" name="transaction_uuid" value="{{uuid}}" required>
+    <input type="text" id="product_code" name="product_code" value ="EPAYTEST" required>
+    <input type="text" id="product_service_charge" name="product_service_charge" value="0" required>
+    <input type="text" id="product_delivery_charge" name="product_delivery_charge" value="0" required>
+    <input type="text" id="success_url" name="success_url" value="http://localhost:8000/payment" required>
+    <input type="text" id="failure_url" name="failure_url" value="https://google.com" required>
+    <input type="text" id="signed_field_names" name="signed_field_names" value="total_amount,transaction_uuid,product_code" required>
+    <input type="text" id="signature" name="signature" value="{{signature}}" required>
+    <input value="Pay" type="submit">
+    </form>
+
+
+</div>
+
+
+
+  
+
+{% endfor %}
+{% else %}
+<p>You have neither paid your gym fees nor selected trainer. Please contact with gym owner</p>
+{% endif %}
+
+
+{% if message %}
+{% for message in message %}
+<div id="messageModal" class="modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Message</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>{{ message.description }}</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endfor %}
+{% endif %}
+
+
+  </div><!-- /.container-fluid -->
+</section>
+<!-- /.content -->
+
+
+<script src="{% static 'dist/js/manage_gymfees_template.js' %}?v={{ time }}"></script>
+<script src="{% static 'dist/js/student_home_template.js' %}?v={{ time }}"></script>
+<script src="{% static 'dist/js/add_gymfees_template.js' %}?v={{ time }}"></script>
+{% endblock main_content %}

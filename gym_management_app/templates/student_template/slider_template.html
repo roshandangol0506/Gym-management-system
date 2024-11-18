@@ -34,7 +34,16 @@
               <i class="nav-icon fas fa-th"></i>
               <p>
                 Gym Member Home
-                <span class="right badge badge-danger">New</span>
+              </p>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            {% url 'customer_leave_appointment' as customer_leave_appointment %}
+            <a href="{{ customer_leave_appointment }}" class="nav-link {% if request.path == customer_leave_appointment %} active {% endif %}">
+              <i class="nav-icon fas fa-th"></i>
+              <p>
+                Customer Leave 
               </p>
             </a>
           </li>

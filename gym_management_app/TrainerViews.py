@@ -11,9 +11,16 @@ def trainer_detail(request):
 def trainer_home(request):
     trainer=Trainer.objects.get(admin__username=request.user.username)
     customerdue = CustomerDue.objects.filter(trainer_id=trainer) 
-    message= Messages.objects.all()
+    current_date = date.today()
+    message = Messages.objects.filter(end_date__gte=current_date)
     current_date = date.today()
     user_first_name = request.user.first_name 
+
+    # Check if the message has already been shown in this session
+    show_message = request.session.get("show_message", True)  # Default to True if not set
+
+    # Set the session variable to False so it won't show again
+    request.session["show_message"] = False
 
     count = 0
     for cd in customerdue:
@@ -23,7 +30,7 @@ def trainer_home(request):
         "user": request.user,
         "trainer": trainer,
         "customerdue": customerdue,
-        "message": message,
+        "message": message if show_message else None,
         "current_date": current_date,
         "matching_count": count  
     }

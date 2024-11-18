@@ -7,15 +7,13 @@ Participators {% endblock page_title %} {% load static %} {% block main_content 
       <div class="col-12">
         <div class="card">
           <div class="card-header">
+            
             <h3 class="card-title">Participators Details</h3>
+            
           </div>
           <div class="card-body table-responsive p-0">
-            {% regroup eventparticipation by event_id.event_name as event_groups %}
-            
-            {% for group in event_groups %}
             <div>
-              <h3>{{ group.grouper }}</h3>
-              <a href="{% url 'delete_eventparticipators' group.list.0.event_id.id %}" class="btn btn-danger" onclick="return confirmDeleteCustomerDue();">Delete All</a>
+             
           </div>
             <table class="table table-hover text-nowrap">
                 <thead>
@@ -24,24 +22,28 @@ Participators {% endblock page_title %} {% load static %} {% block main_content 
                         <th>Name of Participators</th>
                         <th>Event Name</th>
                         <th>Amount</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
                     <!-- Loop through each event participation under the same event name -->
-                    {% for eventparticipation in group.list %}
+                    {% for eventparticipation in eventparticipation %}
                     <tr class="due-row" data-end-date="{{ customerdue.session_end_date }}">
                         <td>{{ forloop.counter }}</td>
                         <td>{{ eventparticipation.participator }}</td>
                         <td>{{ eventparticipation.event_id.event_name }}</td>
                         <td>{{ eventparticipation.amount }}</td>
                         <td>
-                           
+                          <a
+                          href="/delete_eventparticipators/{{eventparticipation.id}}"
+                          class="btn btn-danger"
+                          >Delete</a
+                        >
                         </td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
-            {% endfor %}
         </div>
         
           <!-- /.card-body -->

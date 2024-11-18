@@ -5,7 +5,7 @@ Gym Fees {% endblock page_title %} {% load static %} {% block main_content %}
   <div class="container-fluid">
     <div class="row">
       <div class="col-12">
-        <div class="card">
+        <div class="card card-primary">
           <div class="card-header">
             <h3 class="card-title">Gym Members Due Details</h3>
 
@@ -65,7 +65,7 @@ Gym Fees {% endblock page_title %} {% load static %} {% block main_content %}
                         <td>{{ customerdue.amount }}</td>
                         <td>{{ customerdue.session_end_date }}</td>
                         <td>
-                            <img src="{{ customerdue.customer_id.profile_pic }}" style="width: 100px" />
+                            <img src="{{ customerdue.customer_id.profile_pic }}" style="width:100px; height: 100px; border-radius: 100%" />
                         </td>
                         <td class="days-left"></td> <!-- Updated: Add this column for days left -->
                         <td>{{ customerdue.updated_at }}</td>
@@ -73,11 +73,12 @@ Gym Fees {% endblock page_title %} {% load static %} {% block main_content %}
                             <a href="/edit_gymfees/{{ customerdue.id }}" class="btn btn-success">Edit</a>
                             <a href="/delete_gymfees/{{ customerdue.id }}" class="btn btn-danger" onclick="return confirmDeleteCustomerDue();">Delete</a>
                             <a 
-                              href="{% url 'send_gymfees_email' customerdue.id %}" 
-                              class="btn btn-info" 
-                              data-email-link="{% url 'send_gymfees_email' customerdue.id %}">
-                              Send Email
-                          </a>
+                                href="{% url 'send_gymfees_email' customerdue.id %}" 
+                                class="btn btn-info send-email-btn" 
+                                data-email-link="{% url 'send_gymfees_email' customerdue.id %}">
+                                Send Email
+                            </a>
+
                         </td>
                     </tr>
                     {% endfor %}

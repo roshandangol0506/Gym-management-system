@@ -5,7 +5,7 @@ Event {% endblock page_title %} {% load static %} {% block main_content %}
   <div class="container-fluid">
     <div class="row">
       <div class="col-12">
-        <div class="card">
+        <div class="card card-primary">
           <div class="card-header">
             <h3 class="card-title">Event Details</h3>
 
@@ -14,7 +14,7 @@ Event {% endblock page_title %} {% load static %} {% block main_content %}
           </div>
           <!-- /.card-header -->
           <div class="card-body table-responsive p-0">
-            <table class="table table-hover text-nowrap">
+            <table class="table table-hover text-nowrap" style="border-collapse: collapse;">
               <thead>
                 <tr>
                   <th>S.N</th>
@@ -52,17 +52,68 @@ Event {% endblock page_title %} {% load static %} {% block main_content %}
                     </a>
                   </td>
                 </tr>
+                <tr>
+                  <td colspan="3">
+                    <form role="form" action="/save_add_participation" method="post" enctype="multipart/form-data">
+                      {% csrf_token %}
+                      <div class="card-body">
+                          <input type="hidden" id="event_id" name="event_id" value="{{ event.id }}">
+                        
+                        <div class="form-group">
+                          <label for="participator">Trainer / Customer</label>
+                          {{ form.participator }}
+                        </div>
+                        
+                          <input type="hidden" id="amount" name="amount" class="form-control" value="{{ event.amount }}" readonly> 
+                        
+                      </div>
+                  
+                      <div class="card-footer">
+                          <button type="submit" class="btn btn-primary btn-block">Add Participator</button>
+                      </div>
+                  </form>
+                  </td>
+                  <td colspan="1" class="h1 translate-middle" style="vertical-align: middle;">→</td>
+
+
+                  <td colspan="2">
+                    <div class="card-body">
+                        <div class="form-group">
+                          <label for="participator">Participators </label>
+                          {% for eventparticipation in eventparticipation %}
+                          {% if eventparticipation.event_id.event_name == event.event_name %}
+                          <ul  style="margin: 5px 3px; padding: 0;">
+                          {{ eventparticipation.participator }}
+                          </ul>
+                          {% endif %}
+                          {% endfor %}
+                        </div>
+                  </div>
+              
+                  <div class="card-footer">
+                    <a
+                    href="/manage_participation/{{event.id}}"
+                    class="btn btn-danger btn-block"
+                    >Delete Participators</a
+                  >
+                  </div>
+                  </td>
+                </tr>
                 {% endfor %}
               </tbody>
             </table>
+            <div class="form-group">
+              {% if messages %}
+                {% for message in messages %}
+                  {% if message.tags == 'error' %}
+                    <div class="alert alert-danger" style="margin-top: 10px;">{{ message }}</div>
+                  {% elif message.tags == 'success' %}
+                    <div class="alert alert-success" style="margin-top: 10px;">{{ message }}</div>
+                  {% endif %}
+                {% endfor %}
+              {% endif %}
+            </div>
           </div>
-          {% if messages %}
-          {% for message in messages %}
-              <div class="alert {% if message.tags == 'success' %}alert-success{% else %}alert-danger{% endif %}">
-                  {{ message }}
-              </div>
-          {% endfor %}
-      {% endif %}
           <!-- /.card-body -->
         </div>
         <!-- /.card -->

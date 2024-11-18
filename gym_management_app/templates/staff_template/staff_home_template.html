@@ -44,7 +44,6 @@
 
         {% if context.message %}
         {% for message in context.message %}
-        {%if message.end_date >= context.current_date%}
         <div id="messageModal" class="modal" tabindex="-1" role="dialog">
           <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -63,7 +62,6 @@
             </div>
           </div>
         </div>
-        {%endif%}
         {%endfor%}
         {% endif%}
         

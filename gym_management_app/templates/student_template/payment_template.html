@@ -1,0 +1,58 @@
+{% extends 'student_template/base_template.html' %}
+{% block page_title %}
+Gym Fees Payment
+{% endblock page_title %}
+{% block main_content %}
+{% load static %}
+<!-- Main content -->
+<section class="content">
+  <div class="container-fluid">
+    
+    <h4 class="row justify-content-center card-body">Leave Detail</h4>
+    <form
+            role="form"
+            action="/save_add_customerleave"
+            method="post"
+            enctype="multipart/form-data"
+          >
+            {% csrf_token %}
+            <div class="card-body">
+              {{ form }}
+
+              <label>Trainer</label>
+              {% for due in due %}
+              <input type="text" class="form-control" value="{{ due.trainer_id.admin.first_name }} {{due.trainer_id.admin.last_name}}" readonly="true"/>
+              <input type="hidden" class="form-control" name="trainer" value="{{due.trainer_id.admin.username}}"/><br/><br/>
+              {% endfor %}
+              <div class="form-group">
+                {% if messages %}
+                  {% for message in messages %}
+                  {% if message.tags == 'error' %}
+                  <div class="alert alert-danger" style="margin-top:10px">{{ message }}</div>
+                  {% endif %}
+                  {% if message.tags == 'success' %}
+                  <div class="alert alert-success" style="margin-top:10px">{{ message }}</div>
+                  {% endif %}
+                  {% endfor %}
+                {% endif %}
+                <!-- /.col -->
+              </div>
+            </div>
+            <!-- /.card-body -->
+
+            <div class="card-footer">
+              <button type="submit" class="btn btn-primary btn-block">
+                Leave Submit
+              </button>
+            </div>
+          </form>
+
+
+<!-- /.card -->
+</div><!-- /.container-fluid -->
+</section>
+<!-- /.content -->
+<script src="{% static 'dist/js/manage_gymfees_template.js' %}?v={{ time }}"></script>
+<script src="{% static 'dist/js/student_home_template.js' %}?v={{ time }}"></script>
+
+{% endblock main_content %}

@@ -25,11 +25,7 @@ SECRET_KEY = 'django-insecure-(l)@zxmcgi*w^zar5-0iyegt(wv^9q#4_&ak#ju0+nw@==_*p^
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['1d65-2407-1400-aa0a-b5c0-d5c9-336d-ca8-f738.ngrok-free.app', '127.0.0.1']
-
-CSRF_TRUSTED_ORIGINS = [
-    'https://1d65-2407-1400-aa0a-b5c0-d5c9-336d-ca8-f738.ngrok-free.app'
-]
+ALLOWED_HOSTS = ['*']
 
 MEDIA_URL='/media/'
 MEDIA_ROOT=os.path.join(BASE_DIR,"media")
@@ -73,7 +69,7 @@ ROOT_URLCONF = 'gym_management_system.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['gym_management_app/templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -143,6 +139,16 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 AUTH_USER_MODEL="gym_management_app.CustomUser"
+
+# EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+# EMAIL_FILE_PATH=os.path.join(BASE_DIR, "sent_mails")
+
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT=587
+EMAIL_HOST_USER="roshan2121004@iimscollege.edu.np"
+EMAIL_HOST_PASSWORD="Dontbreathe1"
+EMAIL_USE_TLS=True
+DEFAULE_FROM_EMAIL="Roshan Dangol <roshan2121004@iimscollege.edu.np>"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field

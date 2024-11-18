@@ -19,43 +19,18 @@
       <p class="d-inline">(</p>
       <p class="days-left d-inline"></p>
       <p class="d-inline">)</p>
-      <h4 class="row justify-content-center card-body">Leave Detail</h4>
-    <form
-            role="form"
-            action="/save_add_customerleave"
-            method="post"
-            enctype="multipart/form-data"
-          >
-            {% csrf_token %}
-            <div class="card-body">
-              {{ form }}
 
-              <label>Trainer</label>
-              <input type="text" class="form-control" value="{{ due.trainer_id.admin.first_name }} {{due.trainer_id.admin.last_name}}" readonly="true"/>
-              <input type="hidden" class="form-control" name="trainer" value="{{due.trainer_id.admin.username}}"/><br/><br/>
 
-              <div class="form-group">
-                {% if messages %}
-                  {% for message in messages %}
-                  {% if message.tags == 'error' %}
-                  <div class="alert alert-danger" style="margin-top:10px">{{ message }}</div>
-                  {% endif %}
-                  {% if message.tags == 'success' %}
-                  <div class="alert alert-success" style="margin-top:10px">{{ message }}</div>
-                  {% endif %}
-                  {% endfor %}
-                {% endif %}
-                <!-- /.col -->
-              </div>
-            </div>
-            <!-- /.card-body -->
+<div class="mt-5">
+      <h3>Select Payment Method</h3>
+      <!-- select payment method chai student_home_template1.0 ma cha just copy all and paste everything in here, CustomerViews.py ma pani sabai melai sake maila -->
+      <p class="d-inline">The online payment system through eSewa or Khalti will be available in the near future. In the meantime, please settle your gym fees in cash. Thank you for your understanding!</p>
+</div>
+</div>
 
-            <div class="card-footer">
-              <button type="submit" class="btn btn-primary btn-block">
-                Leave Submit
-              </button>
-            </div>
-          </form>
+
+
+      
 
     {% endfor %}
 {% else %}
@@ -64,33 +39,35 @@
 
 
 {% if message %}
-{% for message in message %}
-{%if message.end_date >= current_date%}
-<div id="messageModal" class="modal" tabindex="-1" role="dialog">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Message</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <p>{{ message.description }}</p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+  {% for message in message %}
+    <div id="messageModal" class="modal" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Message</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>{{ message.description }}</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-</div>
-{%endif%}
-{%endfor%}
-{% endif%}
+  {% endfor %}
+{% endif %}
+
 
       </div><!-- /.container-fluid -->
     </section>
     <!-- /.content -->
+
+
     <script src="{% static 'dist/js/manage_gymfees_template.js' %}?v={{ time }}"></script>
-    <script src="{% static 'dist/js/student_home_template.js' %}?v={{ time }}"></script>
+<script src="{% static 'dist/js/student_home_template.js' %}?v={{ time }}"></script>
+<script src="{% static 'dist/js/add_gymfees_template.js' %}?v={{ time }}"></script>
     {% endblock main_content %}

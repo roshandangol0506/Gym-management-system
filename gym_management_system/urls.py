@@ -1,6 +1,6 @@
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 
 from gym_management_app import views, HodViews, TrainerViews, CustomerViews
 
@@ -10,6 +10,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('demo/', views.showDemoPage),
     path('', views.ShowLoginPage, name="ShowLoginPage"),
+    path('accounts/', include('django.contrib.auth.urls')),
 
     path('logout_user', views.Logout_user,name="logout"),
     path('doLogin', views.do_Login, name="do_login"),
@@ -22,6 +23,7 @@ urlpatterns = [
     path("customer_detail", CustomerViews.customer_detail, name="customer_detail"),
     path("save_add_customerleave", CustomerViews.save_add_customerleave, name="save_add_customerleave"),
     path("customer_leave", TrainerViews.customer_leave, name="customer_leave"),
+    path("customer_leave_appointment", CustomerViews.customer_leave, name="customer_leave_appointment"),
 
     path("add_trainer", HodViews.add_trainer, name="add_trainer"),
     path("save_add_trainer", HodViews.save_add_trainer, name="save_add_trainer"),
@@ -57,11 +59,10 @@ urlpatterns = [
     path('delete_event/<int:event_id>/', HodViews.delete_event, name='delete_event'),
     path('send_event/<int:event_id>/', HodViews.send_event, name='send_event_email'),
 
-    path("add_participation", HodViews.add_participation, name="add_participation"),
     path("save_add_participation", HodViews.save_add_participation, name="save_add_participation"),
-    path("manage_participation", HodViews.manage_participation, name="manage_participation"),
+    path("manage_participation/<int:event_id>/", HodViews.manage_participation, name="manage_participation"),
 
-    path('delete_eventparticipators/<int:event_id>/', HodViews.delete_eventparticipators, name='delete_eventparticipators'),
+    path('delete_eventparticipators/<int:eventparticipation_id>/', HodViews.delete_eventparticipators, name='delete_eventparticipators'),
 
     path("save_add_message", HodViews.save_add_message, name="save_add_message"),
     path("message", HodViews.admin_home, name="message"),
