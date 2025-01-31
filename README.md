@@ -5,20 +5,32 @@ A web-based Gym Management System designed to streamline gym operations, manage 
 ## 🚀 Features
 
 Admin |||--- manages ---||| Trainer
+
 Admin |||--- manages ---||| Customer
+
 Admin |||--- tracks ---||| Payments
+
 Admin |||--- sends email to ---||| Customer (for due payments)
+
 Admin |||--- sendmessages ---||| Everyone (Trainer & Customer)
 
+
 Trainer |||--- trains ---||| Customer
+
 Trainer |||--- receives ---||| Leave Messages
+
 Trainer |||--- participates in ---||| Events
 
+
 Customer |||--- sends ---||| Leave Messages
+
 Customer |||--- makes ---||| Payments (via eSewa)
+
 Customer |||--- participates in ---||| Events
 
+
 Admin |||--- organizes ---||| Events
+
 Events |||--- have ---||| Participants (Customers)
 
 
@@ -55,5 +67,5 @@ Events |||--- have ---||| Participants (Customers)
 
 1. Clone the repository:
    ```sh
-   git clone https://github.com/roshandangol0506/Gym-management-system
+   https://github.com/roshandangol0506/Gym-management-system
 
