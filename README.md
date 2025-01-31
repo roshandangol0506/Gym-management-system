@@ -55,4 +55,5 @@ Events |||--- have ---||| Participants (Customers)
 
 1. Clone the repository:
    ```sh
-   git clone https://github.com/yourusername/Gym-management-system.git
+   git clone https://github.com/roshandangol0506/Gym-management-system
+
